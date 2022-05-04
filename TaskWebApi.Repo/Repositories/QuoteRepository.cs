@@ -29,5 +29,36 @@ namespace WebApi.Repo.Repositories
 
             
         }
+
+        public void PutQuote(int id, Quote quote)
+        {
+            using (var db = new TaskDBEntities())
+            {
+                var result = db.Quote.SingleOrDefault(q => q.ID == id);
+                if (result != null)
+                {
+                    var target = quote.QuoteType;
+                    if (target != null)
+                        result.QuoteType = target;
+
+                    target = quote.Contact;
+                    if (target != null)
+                        result.Contact = target;
+
+                    target = quote.Task;
+                    if (target != null)
+                        result.Task = target;
+
+                    var target2 = quote.DueDate;
+                    if (target != null)
+                        result.DueDate = target2;
+
+                    target = quote.TaskType;
+                    if (target != null)
+                        result.TaskType = target;
+                }
+                db.SaveChanges();
+            }
+        }
     }
 }

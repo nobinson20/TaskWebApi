@@ -62,10 +62,22 @@ namespace TaskWebApi.WebApi.Service
         }
 
         // delete
-        public void DeleteQuote(int id)
+        public QuoteDTO DeleteQuote(int id)
         {
-            uow.Quotes.Remove(uow.Quotes.GetById(id));
-            uow.Complete();
+            Quote foundQuote = uow.Quotes.GetById(id);
+            if (foundQuote != null)
+            {
+                uow.Quotes.Remove(foundQuote);
+                uow.Complete();
+                return mapper.Map<QuoteDTO>(foundQuote);
+            }
+            else
+            {
+                return null;
+            }
+            
+
+            
         }
 
         // put
@@ -75,5 +87,9 @@ namespace TaskWebApi.WebApi.Service
           
         }
 
+        public void PutQuote(int id, QuoteDTO quoteDTO)
+        {
+            uow.Quotes.PutQuote(id, mapper.Map<Quote>(quoteDTO));
+        }
     }
 }

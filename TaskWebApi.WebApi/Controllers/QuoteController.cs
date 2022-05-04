@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Marvin.JsonPatch;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,16 +57,28 @@ namespace TaskWebApi.WebApi.Controllers
 
         [HttpDelete]
         [Route("api/Quote/{id}")]
-        public void DeleteQuote(int id)
+        public string DeleteQuote(int id)
         {
-            quoteService.DeleteQuote(id);
+            QuoteDTO quoteDTO = quoteService.DeleteQuote(id);
+            if (quoteDTO != null)
+                return quoteDTO.ToString();
+            return "No quote at ID: " + id + " is found";
         }
 
-        [HttpPut]
-        [Route("api/Quote/{id}/{quoteType}")]
-        public void PutQuoteType(int id, string quoteType)
+        [HttpPatch]
+        [Route("api/Quote/{id}")]
+        public IHttpActionResult PutQuoteType([FromUri ]int id, [FromBody] QuoteModel quoteModel)
         {
-            quoteService.PutQuoteType(id, quoteType);
+            if (quoteModel != null)
+            {
+                QuoteDTO quoteDTO = mapper.Map<QuoteDTO>(quoteModel);
+                quoteService.PutQuote(id, quoteDTO);
+                return Ok(quoteService.GetById(id));
+            }
+            else
+            {
+                return BadRequest("Nothing is provided");
+            }
         }
     }
 }
